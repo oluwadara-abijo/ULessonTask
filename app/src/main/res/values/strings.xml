@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ULessonTask</string>
+    <string name="lesson">Lesson</string>
 </resources>
