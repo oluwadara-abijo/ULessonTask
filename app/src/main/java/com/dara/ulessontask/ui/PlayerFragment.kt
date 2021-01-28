@@ -1,5 +1,6 @@
 package com.dara.ulessontask.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,11 +17,15 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
-    private lateinit var exoPlayer : SimpleExoPlayer
+    private var exoPlayer: SimpleExoPlayer? = null
     private lateinit var playerView: PlayerView
     private lateinit var lesson: Lesson
+    private val isNewApi = Build.VERSION.SDK_INT >= 24
+    private var playLessonWhenReady = true
+    private var currentWindow = 0
+    private var playbackPosition = 0L
 
-    companion object{
+    companion object {
         private const val LESSON = "lesson"
         fun newInstance(lesson: Lesson) =
             PlayerFragment().apply {
@@ -38,22 +43,59 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initializePlayer()
-    }
-
     private fun initializePlayer() {
         exoPlayer = SimpleExoPlayer.Builder(requireContext()).build()
         playerView.player = exoPlayer
 
         // Set media item using the lesson's media url
         val mediaItem = MediaItem.fromUri(lesson.media_url)
-        exoPlayer.addMediaItem(mediaItem)
+        exoPlayer?.addMediaItem(mediaItem)
 
-        exoPlayer.playWhenReady = true
-        exoPlayer.prepare()
+        exoPlayer?.playWhenReady = playLessonWhenReady
+        exoPlayer?.seekTo(currentWindow, playbackPosition)
+        exoPlayer?.prepare()
+    }
 
+    /**
+     * Release resources when not in use
+     */
+    private fun releasePlayer() {
+        if (exoPlayer != null) {
+            exoPlayer!!.apply {
+                playLessonWhenReady = playWhenReady
+                currentWindow = currentWindowIndex
+                playbackPosition = currentPosition
+                release()
+            }
+            exoPlayer = null
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (isNewApi) {
+            initializePlayer()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isNewApi || exoPlayer == null) {
+            initializePlayer()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isNewApi) {
+            releasePlayer()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isNewApi) {
+            releasePlayer()
+        }
     }
 }
