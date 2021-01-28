@@ -9,10 +9,19 @@ import com.bumptech.glide.Glide
 import com.dara.ulessontask.data.Subject
 import com.dara.ulessontask.databinding.ListItemSubjectBinding
 
-class SubjectAdapter(private var subjects: List<Subject>, private val context: Context) :
+class SubjectAdapter(
+    private var subjects: List<Subject>,
+    private val context: Context,
+    private val listener: ItemClickListener
+) :
     RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
 
     private lateinit var binding: ListItemSubjectBinding
+
+    // Handle item clicks
+    interface ItemClickListener {
+        fun onItemClick(subject: Subject)
+    }
 
     inner class SubjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView = binding.imgSubjectIcon
@@ -32,6 +41,7 @@ class SubjectAdapter(private var subjects: List<Subject>, private val context: C
             // TODO Change icon to image from API
             Glide.with(context).load(icon).placeholder(R.drawable.subject_placeholder)
                 .into(imageView)
+            itemView.setOnClickListener { listener.onItemClick(subject) }
         }
 
     }

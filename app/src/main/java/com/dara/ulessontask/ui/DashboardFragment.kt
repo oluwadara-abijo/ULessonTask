@@ -17,14 +17,13 @@ import com.dara.ulessontask.data.Subject
 import com.dara.ulessontask.databinding.FragmentDashboardBinding
 import com.dara.ulessontask.viewmodel.MainViewModel
 
-class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
+class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.ItemClickListener {
 
     private val viewModel by viewModels<MainViewModel>()
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private lateinit var subjectAdapter: SubjectAdapter
     private lateinit var subjects: List<Subject>
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -64,12 +63,20 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     }
 
     private fun displaySubjects() {
-        subjectAdapter = SubjectAdapter(subjects, requireContext())
+        subjectAdapter = SubjectAdapter(subjects, requireContext(), this)
         val gridLayoutManager =
             GridLayoutManager(requireContext(), 2, RecyclerView.VERTICAL, false)
         binding.rvSubjects.apply {
             layoutManager = gridLayoutManager
             adapter = subjectAdapter
         }
+    }
+
+    override fun onItemClick(subject: Subject) {
+        val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+        fragmentTransaction?.replace(
+            R.id.fragment_container,
+            ChaptersFragment.newInstance(subject)
+        )?.addToBackStack(null)?.commit()
     }
 }

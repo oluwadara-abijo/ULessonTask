@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGreyBackground">
+    android:background="@color/colorGreyBackground"
+    tools:context=".ui.ChaptersFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_back"
-        app:title="Biology" />
+        app:navigationIcon="@drawable/ic_back" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chapters"
