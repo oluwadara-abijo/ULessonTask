@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dara.ulessontask.R
 import com.dara.ulessontask.adapters.ChapterAdapter
+import com.dara.ulessontask.adapters.LessonAdapter
 import com.dara.ulessontask.data.Chapter
+import com.dara.ulessontask.data.Lesson
 import com.dara.ulessontask.data.Subject
 import com.dara.ulessontask.databinding.FragmentChaptersBinding
 
-class ChaptersFragment : Fragment(R.layout.fragment_chapters) {
+class ChaptersFragment : Fragment(R.layout.fragment_chapters), LessonAdapter.ItemClickListener {
 
     private var _binding: FragmentChaptersBinding? = null
     private val binding get() = _binding!!
@@ -60,5 +62,13 @@ class ChaptersFragment : Fragment(R.layout.fragment_chapters) {
             layoutManager = linearLayoutManager
             adapter = chapterAdapter
         }
+    }
+
+    override fun onItemClick(lesson: Lesson) {
+        // When a lesson is clicked, navigate to PlayerFragment
+        val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+        fragmentTransaction?.replace(
+            R.id.fragment_container, PlayerFragment.newInstance(lesson)
+        )?.addToBackStack(null)?.commit()
     }
 }

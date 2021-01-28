@@ -10,10 +10,19 @@ import com.dara.ulessontask.R
 import com.dara.ulessontask.data.Lesson
 import com.dara.ulessontask.databinding.ListItemLessonBinding
 
-class LessonAdapter(private var lessons: List<Lesson>, private val context: Context) :
+class LessonAdapter(
+    private var lessons: List<Lesson>,
+    private val context: Context,
+    private val listener: ItemClickListener
+) :
     RecyclerView.Adapter<LessonAdapter.LessonViewHolder>() {
 
     private lateinit var lessonBinding: ListItemLessonBinding
+
+    // Handle item clicks
+    interface ItemClickListener {
+        fun onItemClick(lesson: Lesson)
+    }
 
     inner class LessonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textView = lessonBinding.lessonName
@@ -23,12 +32,16 @@ class LessonAdapter(private var lessons: List<Lesson>, private val context: Cont
             textView.text = lesson.name
             Glide.with(context).load(lesson.icon).placeholder(R.drawable.subject_placeholder)
                 .into(imageView)
+            itemView.setOnClickListener { listener.onItemClick(lesson) }
 
         }
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonAdapter.LessonViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): LessonAdapter.LessonViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         lessonBinding = ListItemLessonBinding.inflate(inflater, parent, false)
         return LessonViewHolder(lessonBinding.root)
