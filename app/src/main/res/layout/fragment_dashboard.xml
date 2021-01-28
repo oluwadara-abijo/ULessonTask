@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bg_player_fragment"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/progress_bar"
+            layout="@layout/layout_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_hello"
@@ -42,12 +52,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recent_lessons"
             android:layout_width="0dp"
-            tools:listitem="@layout/list_item_recent_lesson"
             android:layout_height="wrap_content"
             android:layout_margin="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_recent" />
+            app:layout_constraintTop_toBottomOf="@id/tv_recent"
+            tools:itemCount="2"
+            tools:listitem="@layout/list_item_recent_lesson" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_view_all"
@@ -67,7 +78,7 @@
             android:id="@+id/group_recent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             app:constraint_referenced_ids="tv_recent,rv_recent_lessons,btn_view_all" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
