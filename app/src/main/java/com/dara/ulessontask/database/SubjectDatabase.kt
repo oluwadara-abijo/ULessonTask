@@ -5,17 +5,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.dara.ulessontask.data.Chapter
-import com.dara.ulessontask.data.Lesson
+import com.dara.ulessontask.data.RecentLesson
 import com.dara.ulessontask.data.Subject
 
 @Database(
-    entities = [Subject::class], version = 1, exportSchema = false
+    entities = [Subject::class, RecentLesson::class], version = 1, exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class SubjectDatabase : RoomDatabase() {
 
     abstract fun subjectDao(): SubjectDao
+    abstract fun recentLessonDao(): RecentLessonDao
 
     companion object {
         // Singleton prevents multiple instances of database opening at the same time.

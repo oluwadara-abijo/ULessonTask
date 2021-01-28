@@ -9,4 +9,11 @@
         <item name="android:textColor">@color/colorPrimaryText</item>
         <item name="android:textSize">@dimen/big_tex_size</item>
     </style>
+
+    <style name="NormalTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:fontFamily">@font/mulish_regular</item>
+    </style>
 </resources>

@@ -6,15 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.dara.ulessontask.R
 import com.dara.ulessontask.data.Lesson
+import com.dara.ulessontask.data.RecentLesson
 import com.dara.ulessontask.databinding.FragmentPlayerBinding
+import com.dara.ulessontask.viewmodel.MainViewModel
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
 
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
+    private val viewModel by viewModels<MainViewModel>()
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
     private var exoPlayer: SimpleExoPlayer? = null
@@ -54,6 +58,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         exoPlayer?.playWhenReady = playLessonWhenReady
         exoPlayer?.seekTo(currentWindow, playbackPosition)
         exoPlayer?.prepare()
+        addLessonToRecents()
     }
 
     /**
@@ -69,6 +74,24 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             }
             exoPlayer = null
         }
+    }
+
+    private fun addLessonToRecents() {
+        viewModel.getSubjectById(lesson.subject_id).observe(viewLifecycleOwner, {
+            val recentLesson = RecentLesson(
+                lesson.id,
+                lesson.name,
+                lesson.icon,
+                lesson.media_url,
+                lesson.subject_id,
+                lesson.chapter_id,
+                it.name
+            )
+            viewModel.addRecentLesson(recentLesson).observe(viewLifecycleOwner, {
+                return@observe
+            })
+        })
+
     }
 
     override fun onStart() {
