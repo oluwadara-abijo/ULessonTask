@@ -75,8 +75,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
     override fun onItemClick(subject: Subject) {
         val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
         fragmentTransaction?.replace(
-            R.id.fragment_container,
-            ChaptersFragment.newInstance(subject)
+            R.id.fragment_container, ChaptersFragment.newInstance(subject)
         )?.addToBackStack(null)?.commit()
     }
 }

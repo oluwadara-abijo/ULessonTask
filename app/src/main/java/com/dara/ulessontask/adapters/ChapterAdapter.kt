@@ -8,7 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dara.ulessontask.data.Chapter
 import com.dara.ulessontask.databinding.ListItemChapterBinding
 
-class ChapterAdapter(private val chapters: List<Chapter>, val context: Context) :
+class ChapterAdapter(
+    private val chapters: List<Chapter>,
+    val context: Context,
+    private val listener: LessonAdapter.ItemClickListener
+) :
     RecyclerView.Adapter<ChapterAdapter.ChapterViewHolder>() {
 
     private lateinit var chapterBinding: ListItemChapterBinding
@@ -19,7 +23,7 @@ class ChapterAdapter(private val chapters: List<Chapter>, val context: Context) 
 
         fun bind(chapter: Chapter) {
             textView.text = chapter.name
-            recyclerView.adapter = LessonAdapter(chapter.lessons, context)
+            recyclerView.adapter = LessonAdapter(chapter.lessons, context, listener)
         }
 
     }

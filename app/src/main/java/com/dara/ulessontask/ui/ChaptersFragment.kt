@@ -56,7 +56,7 @@ class ChaptersFragment : Fragment(R.layout.fragment_chapters), LessonAdapter.Ite
     }
 
     private fun displayChapters() {
-        chapterAdapter = ChapterAdapter(chapters, requireContext())
+        chapterAdapter = ChapterAdapter(chapters, requireContext(), this)
         val linearLayoutManager = LinearLayoutManager(requireContext())
         binding.rvChapters.apply {
             layoutManager = linearLayoutManager

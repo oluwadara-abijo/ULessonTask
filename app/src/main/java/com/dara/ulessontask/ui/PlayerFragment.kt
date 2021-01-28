@@ -23,7 +23,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     companion object{
         private const val LESSON = "lesson"
         fun newInstance(lesson: Lesson) =
-            ChaptersFragment().apply {
+            PlayerFragment().apply {
                 arguments = Bundle().apply { putParcelable(LESSON, lesson) }
             }
     }
@@ -51,6 +51,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         // Set media item using the lesson's media url
         val mediaItem = MediaItem.fromUri(lesson.media_url)
         exoPlayer.addMediaItem(mediaItem)
+
+        exoPlayer.playWhenReady = true
+        exoPlayer.prepare()
 
     }
 }
