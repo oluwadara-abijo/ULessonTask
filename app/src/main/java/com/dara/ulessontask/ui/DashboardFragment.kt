@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,6 +17,8 @@ import com.dara.ulessontask.data.RecentLesson
 import com.dara.ulessontask.data.Resource
 import com.dara.ulessontask.data.Subject
 import com.dara.ulessontask.databinding.FragmentDashboardBinding
+import com.dara.ulessontask.utils.NetworkUtils
+import com.dara.ulessontask.utils.ViewUtils
 import com.dara.ulessontask.viewmodel.MainViewModel
 
 class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.ItemClickListener,
@@ -26,6 +27,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
     private val viewModel by viewModels<MainViewModel>()
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
+    private lateinit var networkUtils: NetworkUtils
     private lateinit var subjectAdapter: SubjectAdapter
     private lateinit var subjects: List<Subject>
     private lateinit var recentLessonAdapter: RecentLessonAdapter
@@ -41,6 +43,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        networkUtils = NetworkUtils(requireActivity(), binding.progressBar.root)
         subjects = listOf()
         displaySubjects()
         getContent()
@@ -54,28 +57,29 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
         viewModel.contentFromDatabase?.observe(viewLifecycleOwner, { list ->
             subjects = list
             subjectAdapter.setSubjects(subjects)
-            displayRecentLessons()
             if (subjects.isEmpty()) {
                 // The database has no subject records; get data from the server
-                viewModel.contentFromServer.observe(viewLifecycleOwner, {
-                    when (it) {
-                        is Resource.Loading -> Toast.makeText(
-                            requireContext(),
-                            "Loading...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        is Resource.Success -> {
-                            subjectAdapter.setSubjects((it.data as ApiResponse).data.subjects)
-                        }
-                        is Resource.Failure -> Toast.makeText(
-                            requireContext(),
-                            "Error...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                //Check for network connectivity
+                if (networkUtils.isNetworkAvailable()) {
+                    viewModel.contentFromServer.observe(viewLifecycleOwner, {
+                        when (it) {
+                            is Resource.Loading -> networkUtils.showLoading()
+                            is Resource.Success -> {
+                                networkUtils.hideLoading()
+                                subjectAdapter.setSubjects((it.data as ApiResponse).data.subjects)
+                            }
+                            is Resource.Failure ->
+                                ViewUtils().showSnackbar(binding.tvHello, it.error)
 
-                })
+                        }
+
+                    })
+                } else {
+                    // Show message
+                    ViewUtils().showSnackbar(binding.tvHello, getString(R.string.internet_error))
+                }
             }
+            displayRecentLessons()
         })
 
     }
