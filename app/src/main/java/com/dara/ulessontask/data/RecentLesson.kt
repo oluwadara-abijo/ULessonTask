@@ -16,3 +16,12 @@ data class RecentLesson(
     val chapter_id: Int,
     val subjectName: String,
 ) : Parcelable
+
+fun RecentLesson.toLesson() = Lesson(
+    id = id,
+    name = name,
+    icon = icon,
+    media_url = media_url,
+    subject_id = subject_id,
+    chapter_id = chapter_id
+)

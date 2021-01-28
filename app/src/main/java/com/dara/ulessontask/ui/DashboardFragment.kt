@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,10 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dara.ulessontask.R
 import com.dara.ulessontask.SubjectAdapter
 import com.dara.ulessontask.adapters.RecentLessonAdapter
-import com.dara.ulessontask.data.ApiResponse
-import com.dara.ulessontask.data.RecentLesson
-import com.dara.ulessontask.data.Resource
-import com.dara.ulessontask.data.Subject
+import com.dara.ulessontask.data.*
 import com.dara.ulessontask.databinding.FragmentDashboardBinding
 import com.dara.ulessontask.utils.NetworkUtils
 import com.dara.ulessontask.utils.ViewUtils
@@ -32,6 +30,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
     private lateinit var subjects: List<Subject>
     private lateinit var recentLessonAdapter: RecentLessonAdapter
     private lateinit var recentLessons: List<RecentLesson>
+    private var fragmentTransaction: FragmentTransaction? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,6 +42,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
         networkUtils = NetworkUtils(requireActivity(), binding.progressBar.root)
         subjects = listOf()
         displaySubjects()
@@ -111,13 +111,15 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
     }
 
     override fun onItemClick(subject: Subject) {
-        val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
         fragmentTransaction?.replace(
             R.id.fragment_container, ChaptersFragment.newInstance(subject)
         )?.addToBackStack(null)?.commit()
     }
 
     override fun onItemClick(lesson: RecentLesson) {
-        TODO("Not yet implemented")
+        fragmentTransaction?.replace(
+            R.id.fragment_container,
+            PlayerFragment.newInstance(lesson.toLesson())
+        )?.addToBackStack(null)?.commit()
     }
 }
