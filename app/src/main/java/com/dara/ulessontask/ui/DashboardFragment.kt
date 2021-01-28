@@ -40,26 +40,37 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
         getContent()
     }
 
+    /**
+     * Get subjects from database or server if database is empty
+     */
     private fun getContent() {
-        viewModel.content.observe(viewLifecycleOwner, {
-            println("Res - $it")
-            when (it) {
-                is Resource.Loading -> Toast.makeText(
-                    requireContext(),
-                    "Loading...",
-                    Toast.LENGTH_SHORT
-                ).show()
-                is Resource.Success -> {
-                    subjectAdapter.setSubjects((it.data as ApiResponse).data.subjects)
-                }
-                is Resource.Failure -> Toast.makeText(
-                    requireContext(),
-                    "Error...",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        //Get subjects from database
+        viewModel.contentFromDatabase?.observe(viewLifecycleOwner, { list ->
+            subjects = list
+            subjectAdapter.setSubjects(subjects)
+            if (subjects.isEmpty()) {
+                // The database has no subject records; get data from the server
+                viewModel.contentFromServer.observe(viewLifecycleOwner, {
+                    when (it) {
+                        is Resource.Loading -> Toast.makeText(
+                            requireContext(),
+                            "Loading...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        is Resource.Success -> {
+                            subjectAdapter.setSubjects((it.data as ApiResponse).data.subjects)
+                        }
+                        is Resource.Failure -> Toast.makeText(
+                            requireContext(),
+                            "Error...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
+                })
+            }
         })
+
     }
 
     private fun displaySubjects() {
