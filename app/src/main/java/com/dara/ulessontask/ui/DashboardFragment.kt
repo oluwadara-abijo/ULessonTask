@@ -8,22 +8,28 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dara.ulessontask.R
 import com.dara.ulessontask.SubjectAdapter
+import com.dara.ulessontask.adapters.RecentLessonAdapter
 import com.dara.ulessontask.data.ApiResponse
+import com.dara.ulessontask.data.RecentLesson
 import com.dara.ulessontask.data.Resource
 import com.dara.ulessontask.data.Subject
 import com.dara.ulessontask.databinding.FragmentDashboardBinding
 import com.dara.ulessontask.viewmodel.MainViewModel
 
-class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.ItemClickListener {
+class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.ItemClickListener,
+    RecentLessonAdapter.ItemClickListener {
 
     private val viewModel by viewModels<MainViewModel>()
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private lateinit var subjectAdapter: SubjectAdapter
     private lateinit var subjects: List<Subject>
+    private lateinit var recentLessonAdapter: RecentLessonAdapter
+    private lateinit var recentLessons: List<RecentLesson>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -48,6 +54,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
         viewModel.contentFromDatabase?.observe(viewLifecycleOwner, { list ->
             subjects = list
             subjectAdapter.setSubjects(subjects)
+            displayRecentLessons()
             if (subjects.isEmpty()) {
                 // The database has no subject records; get data from the server
                 viewModel.contentFromServer.observe(viewLifecycleOwner, {
@@ -83,10 +90,30 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard), SubjectAdapter.
         }
     }
 
+    private fun displayRecentLessons() {
+        viewModel.recentLessons?.observe(viewLifecycleOwner, {
+            recentLessons = it
+            if (it.isNotEmpty()) {
+                binding.groupRecent.visibility = View.VISIBLE
+                recentLessonAdapter = RecentLessonAdapter(recentLessons, this)
+                val linearLayoutManager = LinearLayoutManager(requireContext())
+                binding.rvRecentLessons.apply {
+                    layoutManager = linearLayoutManager
+                    adapter = recentLessonAdapter
+                }
+            }
+
+        })
+    }
+
     override fun onItemClick(subject: Subject) {
         val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
         fragmentTransaction?.replace(
             R.id.fragment_container, ChaptersFragment.newInstance(subject)
         )?.addToBackStack(null)?.commit()
+    }
+
+    override fun onItemClick(lesson: RecentLesson) {
+        TODO("Not yet implemented")
     }
 }

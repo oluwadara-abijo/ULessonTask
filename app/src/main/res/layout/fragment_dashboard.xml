@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bg_player_fragment"
     android:fillViewport="true">
 
@@ -41,6 +42,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recent_lessons"
             android:layout_width="0dp"
+            tools:listitem="@layout/list_item_recent_lesson"
             android:layout_height="wrap_content"
             android:layout_margin="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,6 +50,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_recent" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_view_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="24dp"
@@ -59,6 +62,13 @@
             app:layout_constraintEnd_toEndOf="@id/rv_recent_lessons"
             app:layout_constraintStart_toStartOf="@id/rv_recent_lessons"
             app:layout_constraintTop_toBottomOf="@id/rv_recent_lessons" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_recent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="tv_recent,rv_recent_lessons,btn_view_all" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
