@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ULessonTask</string>
     <string name="lesson">Lesson</string>
+    <string name="hello_simbi">Hello Simbi</string>
+    <string name="recently_watched_topics">Recently watched topics</string>
+    <string name="view_all">View all</string>
 </resources>
